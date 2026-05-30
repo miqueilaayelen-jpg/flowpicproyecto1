@@ -1,147 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FlowPic 📸</title>
+<meta charset="UTF-8">
+<title>FlowPic 📸</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background:#000;
+    color:white;
+}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #000;
-            margin: 0;
-            color: white;
-        }
+/* HEADER */
+.header {
+    background:#0d0d0d;
+    padding:15px;
+    text-align:center;
+    border-bottom:2px solid #ffb6c1;
+    font-weight:bold;
+}
 
-        .header {
-            background: #0d0d0d;
-            padding: 15px;
-            font-size: 22px;
-            font-weight: bold;
-            border-bottom: 2px solid #ffb6c1;
-            text-align: center;
-        }
+/* LOGIN */
+#loginBox {
+    max-width:400px;
+    margin:40px auto;
+    background:#111;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+}
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 10px;
-        }
+/* APP */
+#app { display:none; }
 
-        /* LOGIN */
-        .box {
-            max-width: 400px;
-            margin: 20px auto;
-            background: #111;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
+/* TABS */
+.tabs {
+    display:flex;
+    justify-content:space-around;
+    background:#111;
+    border-bottom:2px solid #222;
+}
 
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 6px 0;
-            border-radius: 8px;
-            border: none;
-        }
+.tab {
+    padding:12px;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-        .btn {
-            width: 95%;
-            padding: 10px;
-            background: #0095f6;
-            border: none;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.tab.active {
+    color:#ff4d6d;
+    border-bottom:2px solid #ff4d6d;
+}
 
-        /* APP */
-        #app {
-            display: none;
-        }
+/* SECTIONS */
+.section { display:none; padding:10px; }
+.section.active { display:block; }
 
-        /* UPLOAD (tu estilo original) */
-        .upload-box {
-            background: #0d0d0d;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #ffb6c1;
-        }
+/* PROFILE HEADER */
+.profile {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px;
+}
 
-        .upload-btn {
-            display: block;
-            background: #0095f6;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
+.avatar {
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:2px solid #ffb6c1;
+    object-fit:cover;
+}
 
-        #fileInput {
-            display: none;
-        }
+/* POST */
+.post {
+    background:#111;
+    margin:10px auto;
+    max-width:500px;
+    border-radius:12px;
+    overflow:hidden;
+}
 
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            width: 100%;
-            background: #0095f6;
-            border: none;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.post img { width:100%; }
 
-        /* FEED GRID */
-        #feed {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
+/* INSTAGRAM BUTTON */
+.ig-btn {
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:8px;
+}
 
-        .post {
-            background: #0d0d0d;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #ffb6c1;
-        }
+.btn-blue { background:#0095f6; color:white; }
+.btn-pink { background:linear-gradient(90deg,#ff4d6d,#ffb703); color:white; }
 
-        .post img {
-            width: 100%;
-            display: block;
-        }
+/* INPUT FILE LABEL */
+.upload-label {
+    display:block;
+    padding:12px;
+    background:linear-gradient(90deg,#ff4d6d,#ffb703);
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+    text-align:center;
+    margin-bottom:10px;
+}
 
-        .post-info {
-            padding: 10px;
-        }
+.upload-label input { display:none; }
 
-        .like-btn {
-            background: none;
-            border: none;
-            color: #0095f6;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 0;
-        }
+.box {
+    max-width:420px;
+    margin:auto;
+    background:#111;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+}
 
-        .likes {
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            #feed {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+.like {
+    color:#ff4d6d;
+    font-size:16px;
+    background:none;
+    border:none;
+    cursor:pointer;
+}
+</style>
 </head>
 
 <body>
@@ -151,129 +139,187 @@
 <!-- LOGIN -->
 <div id="loginBox">
 
-    <div class="box">
-        <h3>Registrarse</h3>
-        <input id="reg_user" placeholder="usuario">
-        <input id="reg_pass" type="password" placeholder="contraseña">
-        <button class="btn" onclick="register()">Crear cuenta</button>
-    </div>
+    <h3>Login</h3>
+    <input id="user">
+    <input id="pass" type="password">
+    <button class="ig-btn btn-blue" onclick="login()">Entrar</button>
 
-    <div class="box">
-        <h3>Entrar</h3>
-        <input id="user" placeholder="usuario">
-        <input id="pass" type="password">
-        <button class="btn" onclick="login()">Ingresar</button>
-        <p id="msg"></p>
-    </div>
+    <hr>
+
+    <h3>Registro</h3>
+    <input id="reg_user">
+    <input id="reg_pass" type="password">
+    <button class="ig-btn btn-pink" onclick="register()">Crear cuenta</button>
 
 </div>
 
 <!-- APP -->
 <div id="app">
 
-    <div class="container">
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('news')">Noticias</div>
+        <div class="tab" onclick="showTab('profile')">Mi perfil</div>
+    </div>
 
-        <!-- UPLOAD (TU DISEÑO ORIGINAL) -->
-        <div class="upload-box">
+    <!-- NEWS -->
+    <div id="news" class="section active">
+        <div id="feed"></div>
+    </div>
 
-            <form id="uploadForm">
+    <!-- PROFILE -->
+    <div id="profile" class="section">
 
-                <label for="fileInput" class="upload-btn">
-                    + Publicación
-                </label>
-
-                <input id="fileInput" type="file" name="file" accept="image/*" required>
-
-                <button type="submit">Subir</button>
-
-            </form>
-
+        <div class="profile">
+            <img id="myAvatar" class="avatar" src="/uploads/default.png">
+            <b>@<span id="myUser"></span></b>
         </div>
 
-        <!-- FEED -->
-        <div id="feed"></div>
+        <!-- CAMBIAR FOTO PERFIL -->
+        <div class="box">
+            <h3>Foto de perfil</h3>
 
+            <form id="avatarForm">
+                <label class="upload-label">
+                    📸 Cambiar foto de perfil
+                    <input type="file" name="file" required>
+                </label>
+
+                <button class="ig-btn btn-blue" type="submit">Guardar</button>
+            </form>
+        </div>
+
+        <!-- SUBIR POST DESDE PERFIL -->
+        <div class="box">
+            <h3>Publicar en mi perfil</h3>
+
+            <form id="uploadForm">
+                <label class="upload-label">
+                    ➕ Subir publicación
+                    <input type="file" name="file" required>
+                </label>
+
+                <button class="ig-btn btn-pink" type="submit">Publicar</button>
+            </form>
+        </div>
+
+        <!-- MIS POSTS -->
+        <div id="myPosts"></div>
     </div>
 
 </div>
 
 <script>
 
-// ---------------- LOGIN ----------------
-async function register() {
+let user=null;
 
-    const username = document.getElementById("reg_user").value;
-    const password = document.getElementById("reg_pass").value;
+// LOGIN
+async function login(){
 
-    await fetch("/register", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password })
+    const res=await fetch("/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            username:document.getElementById("user").value,
+            password:document.getElementById("pass").value
+        })
     });
 
-    alert("Usuario creado");
-}
+    const data=await res.json();
 
-async function login() {
+    if(data.ok){
 
-    const username = document.getElementById("user").value;
-    const password = document.getElementById("pass").value;
+        user=document.getElementById("user").value;
+        localStorage.setItem("user",user);
 
-    const res = await fetch("/login", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password })
-    });
+        document.getElementById("loginBox").style.display="none";
+        document.getElementById("app").style.display="block";
 
-    const data = await res.json();
+        document.getElementById("myUser").innerText=user;
 
-    if (data.ok) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("app").style.display = "block";
         loadFeed();
+        loadMyPosts();
+
     } else {
-        document.getElementById("msg").innerText = "Login incorrecto";
+        alert(data.msg);
     }
 }
 
-// ---------------- UPLOAD ----------------
-document.getElementById("uploadForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
+// REGISTER
+async function register(){
 
-    const formData = new FormData(this);
-
-    await fetch("/upload", {
-        method: "POST",
-        body: formData
+    await fetch("/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            username:document.getElementById("reg_user").value,
+            password:document.getElementById("reg_pass").value
+        })
     });
 
-    this.reset();
+    alert("Cuenta creada");
+}
+
+// TABS
+function showTab(tab){
+
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+
+    document.getElementById(tab).classList.add("active");
+    event.target.classList.add("active");
+
+    if(tab==="profile") loadMyPosts();
+}
+
+// UPLOAD POST (DESDE PERFIL)
+document.getElementById("uploadForm").addEventListener("submit",async(e)=>{
+    e.preventDefault();
+
+    const formData=new FormData(e.target);
+    formData.append("username",localStorage.getItem("user"));
+
+    await fetch("/upload",{method:"POST",body:formData});
+
+    e.target.reset();
     loadFeed();
+    loadMyPosts();
 });
 
-// ---------------- FEED ----------------
-async function loadFeed() {
+// AVATAR
+document.getElementById("avatarForm").addEventListener("submit",async(e)=>{
+    e.preventDefault();
 
-    const res = await fetch("/feed");
-    const data = await res.json();
+    const formData=new FormData(e.target);
+    formData.append("username",localStorage.getItem("user"));
 
-    const feed = document.getElementById("feed");
-    feed.innerHTML = "";
+    const res=await fetch("/set_avatar",{method:"POST",body:formData});
+    const data=await res.json();
 
-    data.images.forEach(post => {
+    if(data.ok){
+        document.getElementById("myAvatar").src=data.avatar;
+    }
+});
 
-        const div = document.createElement("div");
-        div.className = "post";
+// FEED
+async function loadFeed(){
 
-        div.innerHTML = `
-            <img src="${post.url}" />
+    const res=await fetch("/feed");
+    const data=await res.json();
 
-            <div class="post-info">
-                <button class="like-btn" onclick="likePost('${post.name}')">
-                    ❤️ Like
-                </button>
+    const feed=document.getElementById("feed");
+    feed.innerHTML="";
 
-                <div class="likes">❤️ ${post.likes} likes</div>
+    data.images.forEach(p=>{
+
+        const div=document.createElement("div");
+        div.className="post";
+
+        div.innerHTML=`
+            <img src="${p.url}">
+            <div style="padding:10px;">
+                <b>@${p.user}</b><br>
+                <button class="like" onclick="likePost('${p.name}')">❤️ ${p.likes}</button>
             </div>
         `;
 
@@ -281,15 +327,38 @@ async function loadFeed() {
     });
 }
 
-// ---------------- LIKE ----------------
-async function likePost(name) {
-    await fetch("/like/" + name, { method: "POST" });
-    loadFeed();
+// MIS POSTS
+async function loadMyPosts(){
+
+    const res=await fetch("/feed");
+    const data=await res.json();
+
+    const box=document.getElementById("myPosts");
+    box.innerHTML="";
+
+    data.images
+        .filter(p=>p.user===user)
+        .forEach(p=>{
+
+        const div=document.createElement("div");
+        div.className="post";
+
+        div.innerHTML=`
+            <img src="${p.url}">
+            <div style="padding:10px;">
+                ❤️ ${p.likes}
+            </div>
+        `;
+
+        box.appendChild(div);
+    });
 }
 
-// auto refresh
-loadFeed();
-setInterval(loadFeed, 3000);
+// LIKE
+async function likePost(name){
+    await fetch("/like/"+name,{method:"POST"});
+    loadFeed();
+}
 
 </script>
 
