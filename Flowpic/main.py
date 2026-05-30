@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Body
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
@@ -7,56 +7,81 @@ import time
 app = FastAPI()
 
 os.makedirs("uploads", exist_ok=True)
-os.makedirs("stories", exist_ok=True)
-
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-app.mount("/stories", StaticFiles(directory="stories"), name="stories")
 
-likes_data = {}
-stories = []
+# base en memoria
+users = {}
+likes = {}
 
 
+# -------------------
+# HOME
+# -------------------
 @app.get("/")
 def home():
     return FileResponse("templates/index.html")
 
 
-# POST NORMAL
+# -------------------
+# REGISTER
+# -------------------
+@app.post("/register")
+def register(data: dict = Body(default={})):
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return {"ok": False, "msg": "faltan datos"}
+
+    if username in users:
+        return {"ok": False, "msg": "usuario ya existe"}
+
+    users[username] = password
+
+    print("USUARIOS:", users)
+
+    return {"ok": True, "msg": "usuario creado"}
+
+
+# -------------------
+# LOGIN
+# -------------------
+@app.post("/login")
+def login(data: dict = Body(default={})):
+    username = data.get("username")
+    password = data.get("password")
+
+    if username not in users:
+        return {"ok": False, "msg": "usuario no registrado"}
+
+    if users[username] != password:
+        return {"ok": False, "msg": "contraseña incorrecta"}
+
+    return {"ok": True}
+
+
+# -------------------
+# UPLOAD
+# -------------------
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
 
-    path = f"uploads/{file.filename}"
-
-    with open(path, "wb") as buffer:
-        buffer.write(await file.read())
-
-    likes_data.setdefault(file.filename, 0)
-
-    return {"ok": True}
-
-
-# HISTORIAS
-@app.post("/story")
-async def upload_story(file: UploadFile = File(...)):
-
     filename = f"{int(time.time())}_{file.filename}"
-    path = f"stories/{filename}"
+    path = f"uploads/{filename}"
 
-    with open(path, "wb") as buffer:
-        buffer.write(await file.read())
+    content = await file.read()
 
-    stories.append({
-        "url": "/stories/" + filename
-    })
+    with open(path, "wb") as f:
+        f.write(content)
+
+    likes[filename] = 0
 
     return {"ok": True}
 
 
-@app.get("/stories_feed")
-def get_stories():
-    return {"stories": stories}
-
-
+# -------------------
+# FEED
+# -------------------
 @app.get("/feed")
 def feed():
 
@@ -67,14 +92,17 @@ def feed():
             {
                 "url": "/uploads/" + f,
                 "name": f,
-                "likes": likes_data.get(f, 0)
+                "likes": likes.get(f, 0)
             }
             for f in files
         ]
     }
 
 
-@app.post("/like/{file_name}")
-def like(file_name: str):
-    likes_data[file_name] = likes_data.get(file_name, 0) + 1
+# -------------------
+# LIKE
+# -------------------
+@app.post("/like/{name}")
+def like(name: str):
+    likes[name] = likes.get(name, 0) + 1
     return {"ok": True}
