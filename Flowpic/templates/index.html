@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pic 📸</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            margin: 0;
+            color: white;
+        }
+
+        .header {
+            background: #0d0d0d;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            border-bottom: 2px solid #ffb6c1;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 10px;
+        }
+
+        /* UPLOAD */
+        .upload-box {
+            background: #0d0d0d;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ffb6c1;
+        }
+
+        .upload-btn {
+            display: block;
+            background: #0095f6;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            background: #0095f6;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* FEED */
+        #feed {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .post {
+            background: #0d0d0d;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #ffb6c1;
+        }
+
+        .post img {
+            width: 100%;
+            display: block;
+        }
+
+        .post-info {
+            padding: 10px;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .likes {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            #feed {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">FlowPic 📸</div>
+
+<div class="container">
+
+    <div class="upload-box">
+
+        <form id="uploadForm">
+
+            <label for="fileInput" class="upload-btn">
+                + Publicación
+            </label>
+
+            <input id="fileInput" type="file" name="file" accept="image/*" required>
+
+            <button type="submit">Subir</button>
+
+        </form>
+
+    </div>
+
+    <div id="feed"></div>
+
+</div>
+
+<script>
+
+async function loadFeed() {
+    const res = await fetch("/feed");
+    const data = await res.json();
+
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+
+    data.images.forEach(post => {
+
+        const div = document.createElement("div");
+        div.className = "post";
+
+        div.innerHTML = `
+            <img src="${post.url}" />
+
+            <div class="post-info">
+                <button class="like-btn" onclick="likePost('${post.name}')">
+                    ❤️ Like
+                </button>
+
+                <div class="likes">❤️ ${post.likes} likes</div>
+            </div>
+        `;
+
+        feed.appendChild(div);
+    });
+}
+
+// upload sin recargar
+document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    await fetch("/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    this.reset();
+    loadFeed();
+});
+
+async function likePost(name) {
+    await fetch("/like/" + name, { method: "POST" });
+    loadFeed();
+}
+
+loadFeed();
+setInterval(loadFeed, 3000);
+
+</script>
+
+</body>
+</html>
