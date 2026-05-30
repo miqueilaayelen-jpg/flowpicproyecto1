@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pic 📸</title>
+    <title>FlowPic 📸</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -28,7 +28,41 @@
             padding: 10px;
         }
 
-        /* UPLOAD */
+        /* LOGIN */
+        .box {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #111;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 8px;
+            border: none;
+        }
+
+        .btn {
+            width: 95%;
+            padding: 10px;
+            background: #0095f6;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* APP */
+        #app {
+            display: none;
+        }
+
+        /* UPLOAD (tu estilo original) */
         .upload-box {
             background: #0d0d0d;
             padding: 15px;
@@ -65,7 +99,7 @@
             cursor: pointer;
         }
 
-        /* FEED */
+        /* FEED GRID */
         #feed {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -102,7 +136,6 @@
             margin-top: 5px;
         }
 
-        /* MOBILE */
         @media (max-width: 768px) {
             #feed {
                 grid-template-columns: 1fr;
@@ -115,31 +148,112 @@
 
 <div class="header">FlowPic 📸</div>
 
-<div class="container">
+<!-- LOGIN -->
+<div id="loginBox">
 
-    <div class="upload-box">
-
-        <form id="uploadForm">
-
-            <label for="fileInput" class="upload-btn">
-                + Publicación
-            </label>
-
-            <input id="fileInput" type="file" name="file" accept="image/*" required>
-
-            <button type="submit">Subir</button>
-
-        </form>
-
+    <div class="box">
+        <h3>Registrarse</h3>
+        <input id="reg_user" placeholder="usuario">
+        <input id="reg_pass" type="password" placeholder="contraseña">
+        <button class="btn" onclick="register()">Crear cuenta</button>
     </div>
 
-    <div id="feed"></div>
+    <div class="box">
+        <h3>Entrar</h3>
+        <input id="user" placeholder="usuario">
+        <input id="pass" type="password">
+        <button class="btn" onclick="login()">Ingresar</button>
+        <p id="msg"></p>
+    </div>
+
+</div>
+
+<!-- APP -->
+<div id="app">
+
+    <div class="container">
+
+        <!-- UPLOAD (TU DISEÑO ORIGINAL) -->
+        <div class="upload-box">
+
+            <form id="uploadForm">
+
+                <label for="fileInput" class="upload-btn">
+                    + Publicación
+                </label>
+
+                <input id="fileInput" type="file" name="file" accept="image/*" required>
+
+                <button type="submit">Subir</button>
+
+            </form>
+
+        </div>
+
+        <!-- FEED -->
+        <div id="feed"></div>
+
+    </div>
 
 </div>
 
 <script>
 
+// ---------------- LOGIN ----------------
+async function register() {
+
+    const username = document.getElementById("reg_user").value;
+    const password = document.getElementById("reg_pass").value;
+
+    await fetch("/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password })
+    });
+
+    alert("Usuario creado");
+}
+
+async function login() {
+
+    const username = document.getElementById("user").value;
+    const password = document.getElementById("pass").value;
+
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        loadFeed();
+    } else {
+        document.getElementById("msg").innerText = "Login incorrecto";
+    }
+}
+
+// ---------------- UPLOAD ----------------
+document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    await fetch("/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    this.reset();
+    loadFeed();
+});
+
+// ---------------- FEED ----------------
 async function loadFeed() {
+
     const res = await fetch("/feed");
     const data = await res.json();
 
@@ -167,26 +281,13 @@ async function loadFeed() {
     });
 }
 
-// upload sin recargar
-document.getElementById("uploadForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-
-    await fetch("/upload", {
-        method: "POST",
-        body: formData
-    });
-
-    this.reset();
-    loadFeed();
-});
-
+// ---------------- LIKE ----------------
 async function likePost(name) {
     await fetch("/like/" + name, { method: "POST" });
     loadFeed();
 }
 
+// auto refresh
 loadFeed();
 setInterval(loadFeed, 3000);
 
